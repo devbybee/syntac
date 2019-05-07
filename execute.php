@@ -66,6 +66,7 @@ foreach ($obj_xml->DATA->item as $key => $val) {
   $data['depStat'] = $val->COL_DEPARTURE_STATION;
   $data['planDep'] = change_date($val->COL_PLAN_DEPARTURE_DATE);
   $data['acReg'] = new_ac_reg($val->COL_AIRCRAFT_REGISTRATION);
+
   $data['estDepDate'] = change_date($val->COL_EST_DEP_DATE);
   $data['estDepTime'] = change_time($val->COL_EST_DEP_TIME);
   $data['estWheelsOffDate'] = change_date($val->COL_EST_WHEELS_OFF_DATE);
@@ -74,6 +75,28 @@ foreach ($obj_xml->DATA->item as $key => $val) {
   $data['estWheelsOnTime'] = change_time($val->COL_EST_WHEELS_ON_TIME);
   $data['estArrDate'] = change_date($val->COL_EST_ARR_DATE);
   $data['estArrTime'] = change_time($val->COL_EST_ARR_TIME);
+
+  /**
+   * validation for scheduled time
+   * if schelude time abnormal, ex: est_wheels_off greater than est_chox_off
+   * then the value of scheduled change to actual
+   */
+  if (is_minus_scheduled($data['estDepDate'] . ' ' . $data['estDepTime'], $data['estWheelsOffDate'] . ' ' . $data['estWheelsOffTime']) || 
+    is_minus_scheduled($data['estWheelsOffDate'] . ' ' . $data['estWheelsOffTime'], $data['estWheelsOnDate'] . ' ' . $data['estWheelsOnTime']) || 
+    is_minus_scheduled($data['estWheelsOnDate'] . ' ' . $data['estWheelsOnTime'], $data['estArrDate'] . ' ' . $data['estArrTime'])) {
+
+      $data['estDepDate'] = change_date($val->COL_CHOX_OFF_DATE);
+      $data['estDepTime'] = change_time($val->COL_CHOX_OFF_TIME);
+      $data['estWheelsOffDate'] = change_date($val->COL_WHEELS_OFF_DATE);
+      $data['estWheelsOffTime'] = change_time($val->COL_WHEELS_OFF_TIME);
+      $data['estWheelsOnDate'] = change_date($val->COL_WHEELS_ON_DATE);
+      $data['estWheelsOnTime'] = change_time($val->COL_WHEELS_ON_TIME);
+      $data['estArrDate'] = change_date($val->COL_CHOX_ON_DATE);
+      $data['estArrTime'] = change_time($val->COL_CHOX_ON_TIME);
+
+  }
+   //end
+
   $data['choxOffDate'] = change_date($val->COL_CHOX_OFF_DATE);
   $data['choxOffTime'] = change_time($val->COL_CHOX_OFF_TIME);
   $data['wheelsOffDate'] = change_date($val->COL_WHEELS_OFF_DATE);

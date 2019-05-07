@@ -73,3 +73,13 @@ function remove_zulu($param) {
 	$result = preg_replace('/^([^.]*).*$/', '$1', $param);
 	return $result;
 }
+
+function is_minus_scheduled($prev, $next) {
+	$minus =  FALSE;
+	
+	if ( (strtotime($next) - strtotime($prev)) < 0 ) {
+		$minus = TRUE;
+	}
+
+	return $minus;
+}
